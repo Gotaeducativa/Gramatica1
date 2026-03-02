@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gramática · Gota Educativa</title>
+  <style>
+    :root{
+      --paper:#ffffff;
+      --ink:#111827;
+      --muted:#6b7280;
+      --line:#d6d9df;
+      --line2:#b7bcc7;
+      --accent:#f3f57a;
+      --accent2:#e9ec59;
+
+      /* Ejercicio 1 (versión simple) */
+      --c-verbo:#2563eb;
+      --c-propio:#b91c1c;
+      --c-comun:#fca5a5;
+      --c-adjetivo:#16a34a;
+      --c-pron:#facc15;
+
+      /* Ejercicio 3 */
+      --ex3-suj:#60a5fa;
+      --ex3-verb:#f59e0b;
+      --ex3-pred:#34d399;
+
+      --shadow:0 14px 35px rgba(0,0,0,.10);
+      --r:14px;
+      --r2:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{margin:0;padding:18px;background:#f4f6fb;color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+
+    .page{max-width:980px;margin:0 auto;background:var(--paper);border:2px solid var(--line);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
+    .topbar{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:end;border-bottom:2px solid var(--line);background:#fff}
+    .field{display:flex;gap:10px;align-items:center;font-size:14px}
+    .field b{white-space:nowrap}
+    .lineInput{border:none;border-bottom:2px solid var(--line2);padding:6px 6px 4px;width:100%;background:transparent;outline:none;font-size:14px}
+
+    .titleband{background:var(--accent);padding:18px 16px;border-bottom:2px solid var(--line);position:relative}
+    .title{margin:0;text-align:center;font-size:44px;letter-spacing:2px;font-weight:900;text-transform:uppercase}
+    .brand{position:absolute;right:14px;top:14px;font-weight:1000;font-size:12px;text-align:right;letter-spacing:.6px}
+
+    .selectorWrap{position:absolute;left:14px;top:14px;display:flex;gap:8px;align-items:center}
+    .selectorWrap label{font-size:12px;font-weight:900}
+    select, input[type="text"]{
+      border:2px solid var(--line);
+      border-radius:12px;
+      padding:8px 10px;
+      font-weight:900;
+      background:#fff;
+      outline:none;
+      font-size:14px;
+    }
+
+    .content{padding:18px 16px 8px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin:0 0 10px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    button{border:none;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer}
+    .btnPrimary{background:#111827;color:#fff}
+    .btnGhost{background:#eef2ff;color:#111827;border:2px solid #c7d2fe}
+    .btnWarn{background:var(--accent2);color:#111827;border:2px solid rgba(0,0,0,.12)}
+
+    .score{border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:900;background:#fff;min-width:240px}
+    .mini{font-size:12px;color:var(--muted)}
+
+    .section{border:2px solid var(--line);border-radius:var(--r);padding:14px;margin:16px 0}
+    .sectionTitle{font-weight:900;margin:0 0 10px;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:16px}
+
+    .palette{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:2px solid var(--line);border-radius:12px;background:#fff}
+    .palBtn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 10px;font-weight:900;cursor:pointer;user-select:none}
+    .palBtn.active{outline:3px solid rgba(0,0,0,.18);border-color:#111827}
+    .dot{width:14px;height:14px;border-radius:999px;border:2px solid rgba(0,0,0,.15)}
+
+    .wordsBox{border:2px solid var(--line);border-radius:12px;padding:12px;background:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .w{border:2px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:1000;letter-spacing:.4px;background:#fff;cursor:pointer;user-select:none}
+    .w small{font-weight:900;margin-left:8px;color:rgba(0,0,0,.55)}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+    .box{border:2px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+    .tag{display:inline-block;padding:6px 10px;border:2px solid var(--line);border-radius:10px;background:var(--accent);font-weight:900;font-size:12px;margin-bottom:10px}
+    .row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+    .inline2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .inline3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+    .sentence{font-weight:1000;text-align:center;font-size:18px;padding:10px;border:2px solid var(--line);border-radius:12px;background:#fff}
+
+    .markGood{outline:3px solid rgba(22,163,74,.25);border-color:rgba(22,163,74,.45)!important}
+    .markBad{outline:3px solid rgba(220,38,38,.18);border-color:rgba(220,38,38,.55)!important}
+
+    .footer{padding:12px 16px;border-top:2px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+
+    @media (max-width: 860px){
+      .title{font-size:34px}
+      .grid2{grid-template-columns:1fr}
+      .score{width:100%}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page" role="application" aria-label="Ficha digital de gramática">
+
+    <div class="topbar">
+      <div class="field"><b>Nombre:</b> <input class="lineInput" id="fNombre" type="text" /></div>
+      <div class="field"><b>Fecha:</b> <input class="lineInput" id="fFecha" type="text" /></div>
+      <div class="field"><b>Nº de lista:</b> <input class="lineInput" id="fLista" type="text" /></div>
+    </div>
+
+    <div class="titleband">
+      <div class="selectorWrap">
+        <label for="pageSelector">Ficha</label>
+        <select id="pageSelector" style="width:auto; min-width:160px; font-weight:900">
+          <option value="1">Gramática 1</option>
+          <option value="2">Gramática 2</option>
+          <option value="3">Gramática 3</option>
+          <option value="4">Gramática 4</option>
+          <option value="5">Gramática 5</option>
+        </select>
+      </div>
+      <div class="brand">GOTA<br>EDUCATIVA</div>
+      <h1 class="title" id="pageTitle">GRAMÁTICA 1</h1>
+    </div>
+
+    <div class="content">
+
+      <div class="controls">
+        <div class="btns">
+          <button class="btnPrimary" id="btnCheck">Comprobar</button>
+          <button class="btnGhost" id="btnReset">Reiniciar</button>
+          <button class="btnWarn" id="btnShow">Ver soluciones</button>
+          <button class="btnGhost" id="btnPdf">Descargar PDF</button>
+        </div>
+        <div class="score" id="scoreBox">Puntuación: —</div>
+      </div>
+
+      <!-- 1 -->
+      <section class="section" id="sec1">
+        <div class="sectionTitle">1- Clasifica cada palabra</div>
+        <div class="palette" id="palette">
+          <div class="palBtn" data-cat="sust_comun"><span class="dot" style="background:var(--c-comun)"></span> Sustantivo común</div>
+          <div class="palBtn" data-cat="sust_propio"><span class="dot" style="background:var(--c-propio)"></span> Sustantivo propio</div>
+          <div class="palBtn" data-cat="adjetivo"><span class="dot" style="background:var(--c-adjetivo)"></span> Adjetivo</div>
+          <div class="palBtn" data-cat="verbo"><span class="dot" style="background:var(--c-verbo)"></span> Verbo</div>
+          <div class="palBtn" data-cat="pronombre"><span class="dot" style="background:var(--c-pron)" ></span> Pronombre</div>
+        </div>
+        <div class="wordsBox" id="wordsBox"></div>
+        <div class="mini" style="margin-top:8px">Ejercicio 2 usa <b>estas mismas palabras</b> para separar en sílabas e indicar la acentuación.</div>
+      </section>
+
+      <!-- 2 -->
+      <section class="section" id="sec2">
+        <div class="sectionTitle">2- Separa en sílabas e indica si son agudas, llanas o esdrújulas</div>
+        <div class="grid2">
+          <div class="box">
+            <div class="tag">PALABRAS</div>
+            <div class="row" id="practiceWords"></div>
+          </div>
+          <div class="box">
+            <div class="tag">SÍLABAS</div>
+            <div class="row" id="syllablesBox"></div>
+          </div>
+          <div class="box">
+            <div class="tag">ACENTUACIÓN</div>
+            <div class="row" id="accentBox"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="section" id="sec3">
+        <div class="sectionTitle">3- Analiza la oración (Sujeto, Verbo y Predicado)</div>
+        <div class="sentence" id="sentenceText"></div>
+        <div class="palette" id="ex3Palette" style="margin-top:10px">
+          <div class="palBtn active" data-ex3="sujeto"><span class="dot" style="background:var(--ex3-suj)"></span> Sujeto</div>
+          <div class="palBtn" data-ex3="verbo"><span class="dot" style="background:var(--ex3-verb)"></span> Verbo</div>
+          <div class="palBtn" data-ex3="predicado"><span class="dot" style="background:var(--ex3-pred)"></span> Predicado</div>
+        </div>
+        <div class="wordsBox" id="ex3Box" style="margin-top:10px"></div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      <div>GOTA EDUCATIVA · Ficha digital</div>
+      <div id="msg" aria-live="polite"></div>
+    </div>
+
+  </div>
+
+<script>
+  // ===== Helpers =====
+  const $ = (id) => document.getElementById(id);
+
+  function strip(s){
+    let t = (s == null ? '' : String(s)).trim().toLowerCase();
+    try{ t = t.normalize('NFD').replace(/[̀-ͯ]/g,''); }catch(e){}
+    return t;
+  }
+
+  function escapeHtml(v){
+    const s = (v == null ? '' : String(v));
+    return s.replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch]));
+  }
+
+  function setMark(el, ok){
+    if(!el) return;
+    el.classList.remove('markGood','markBad');
+    if(ok === null) return;
+    el.classList.add(ok ? 'markGood' : 'markBad');
+  }
+
+  function msg(t){ const m = $('msg'); if(m) m.textContent = t || ''; }
+
+  // ===== Colores/etiquetas Ej1 =====
+  const CAT_COLOR = {
+    verbo: 'var(--c-verbo)',
+    sust_propio: 'var(--c-propio)',
+    sust_comun: 'var(--c-comun)',
+    adjetivo: 'var(--c-adjetivo)',
+    pronombre: 'var(--c-pron)'
+  };
+  const CAT_LABEL = {
+    verbo: 'VERBO',
+    sust_propio: 'PROPIO',
+    sust_comun: 'COMÚN',
+    adjetivo: 'ADJETIVO',
+    pronombre: 'PRONOMBRE'
+  };
+
+  const EX3_COLOR = { sujeto:'var(--ex3-suj)', verbo:'var(--ex3-verb)', predicado:'var(--ex3-pred)' };
+
+  // ===== Datos (5 fichas) =====
+  // Nota: Ejercicio 2 usa exactamente las mismas palabras del ejercicio 1.
+  const PAGES = {
+    1: {
+      title: 'GRAMÁTICA 1',
+      words: [
+        { id:'w_toman',  text:'TOMAN' },
+        { id:'w_olivia', text:'OLIVIA' },
+        { id:'w_nueva',  text:'NUEVA' },
+        { id:'w_camara', text:'CÁMARA' },
+      ],
+      key: {
+        ex1Cats: { w_toman:'verbo', w_olivia:'sust_propio', w_nueva:'adjetivo', w_camara:'sust_comun' },
+        syl: {
+          s_w_toman:  { parts:['to','man'],     count:2 },
+          s_w_olivia: { parts:['o','li','via'], count:3 },
+          s_w_nueva:  { parts:['nue','va'],     count:2 },
+          s_w_camara: { parts:['ca','ma','ra'], count:3 },
+        },
+        accent: { a_w_toman:'llana', a_w_olivia:'llana', a_w_nueva:'llana', a_w_camara:'esdrujula' },
+        sentence: 'OLIVIA Y SUS AMIGAS TOMAN UNA FOTOGRAFÍA CON LA CÁMARA NUEVA',
+        ex3Tokens: ['OLIVIA','Y','SUS','AMIGAS','TOMAN','UNA','FOTOGRAFÍA','CON','LA','CÁMARA','NUEVA'],
+        ex3Words: {
+          ex3_1:'sujeto', ex3_2:'sujeto', ex3_3:'sujeto', ex3_4:'sujeto',
+          ex3_5:'verbo',
+          ex3_6:'predicado', ex3_7:'predicado', ex3_8:'predicado', ex3_9:'predicado', ex3_10:'predicado', ex3_11:'predicado'
+        }
+      }
+    },
+
+    2: {
+      title: 'GRAMÁTICA 2',
+      words: [
+        { id:'w_crisalida', text:'CRISÁLIDA' },
+        { id:'w_eclosiona', text:'ECLOSIONA' },
+        { id:'w_colorida', text:'COLORIDA' },
+        { id:'w_carmen',   text:'CARMEN' },
+      ],
+      key: {
+        ex1Cats: { w_crisalida:'sust_comun', w_eclosiona:'verbo', w_colorida:'adjetivo', w_carmen:'sust_propio' },
+        syl: {
+          s_w_crisalida:{ parts:['cri','sa','li','da'], count:4 },
+          s_w_eclosiona:{ parts:['e','clo','sio','na'], count:4 },
+          s_w_colorida:{  parts:['co','lo','ri','da'], count:4 },
+          s_w_carmen:{    parts:['car','men'],        count:2 },
+        },
+        accent: { a_w_crisalida:'esdrujula', a_w_eclosiona:'llana', a_w_colorida:'llana', a_w_carmen:'llana' },
+        sentence: 'LA COLORIDA MARIPOSA DE CARMEN ECLOSIONA EN LA CRISÁLIDA',
+        ex3Tokens: ['LA','COLORIDA','MARIPOSA','DE','CARMEN','ECLOSIONA','EN','LA','CRISÁLIDA'],
+        ex3Words: {
+          ex3_1:'sujeto', ex3_2:'sujeto', ex3_3:'sujeto', ex3_4:'sujeto', ex3_5:'sujeto',
+          ex3_6:'verbo',
+          ex3_7:'predicado', ex3_8:'predicado', ex3_9:'predicado'
+        }
+      }
+    },
+
+    3: {
+      title: 'GRAMÁTICA 3',
+      words: [
+        { id:'w_volo', text:'VOLÓ' },
+        { id:'w_alicante', text:'ALICANTE' },
+        { id:'w_murcielago', text:'MURCIÉLAGO' },
+        { id:'w_silencioso', text:'SILENCIOSO' },
+      ],
+      key: {
+        ex1Cats: { w_volo:'verbo', w_alicante:'sust_propio', w_murcielago:'sust_comun', w_silencioso:'adjetivo' },
+        syl: {
+          s_w_volo:{ parts:['vo','lo'], count:2 },
+          s_w_alicante:{ parts:['a','li','can','te'], count:4 },
+          s_w_murcielago:{ parts:['mur','cie','la','go'], count:4 },
+          s_w_silencioso:{ parts:['si','len','cio','so'], count:4 },
+        },
+        accent: { a_w_volo:'aguda', a_w_alicante:'llana', a_w_murcielago:'esdrujula', a_w_silencioso:'llana' },
+        sentence: 'EL SILENCIOSO MURCIÉLAGO VOLÓ POR EL CIELO DE ALICANTE',
+        ex3Tokens: ['EL','SILENCIOSO','MURCIÉLAGO','VOLÓ','POR','EL','CIELO','DE','ALICANTE'],
+        ex3Words: {
+          ex3_1:'sujeto', ex3_2:'sujeto', ex3_3:'sujeto',
+          ex3_4:'verbo',
+          ex3_5:'predicado', ex3_6:'predicado', ex3_7:'predicado', ex3_8:'predicado', ex3_9:'predicado'
+        }
+      }
+    },
+
+    4: {
+      title: 'GRAMÁTICA 4',
+      words: [
+        { id:'w_jupiter', text:'JÚPITER' },
+        { id:'w_planeta', text:'PLANETA' },
+        { id:'w_dibujaron', text:'DIBUJARON' },
+        { id:'w_rapidos', text:'RÁPIDOS' },
+        { id:'w_ellos', text:'ELLOS' },
+      ],
+      key: {
+        ex1Cats: { w_jupiter:'sust_propio', w_planeta:'sust_comun', w_dibujaron:'verbo', w_rapidos:'adjetivo', w_ellos:'pronombre' },
+        syl: {
+          s_w_jupiter:{ parts:['ju','pi','ter'], count:3 },
+          s_w_planeta:{ parts:['pla','ne','ta'], count:3 },
+          s_w_dibujaron:{ parts:['di','bu','ja','ron'], count:4 },
+          s_w_rapidos:{ parts:['ra','pi','dos'], count:3 },
+          s_w_ellos:{ parts:['e','llos'], count:2 },
+        },
+        accent: { a_w_jupiter:'esdrujula', a_w_planeta:'llana', a_w_dibujaron:'llana', a_w_rapidos:'esdrujula', a_w_ellos:'llana' },
+        sentence: 'ELLOS DIBUJARON A JÚPITER RÁPIDAMENTE EN LA LIBRETA',
+        ex3Tokens: ['ELLOS','DIBUJARON','A','JÚPITER','RÁPIDAMENTE','EN','LA','LIBRETA'],
+        ex3Words: {
+          ex3_1:'sujeto',
+          ex3_2:'verbo',
+          ex3_3:'predicado', ex3_4:'predicado', ex3_5:'predicado', ex3_6:'predicado', ex3_7:'predicado', ex3_8:'predicado'
+        }
+      }
+    },
+
+    5: {
+      title: 'GRAMÁTICA 5',
+      words: [
+        { id:'w_atlantico', text:'ATLÁNTICO' },
+        { id:'w_calido', text:'CÁLIDO' },
+        { id:'w_nadare', text:'NADARÉ' },
+        { id:'w_oceano', text:'OCÉANO' },
+        { id:'w_nosotros', text:'NOSOTROS' },
+      ],
+      key: {
+        ex1Cats: { w_atlantico:'adjetivo', w_calido:'adjetivo', w_nadare:'verbo', w_oceano:'sust_comun', w_nosotros:'pronombre' },
+        syl: {
+          s_w_atlantico:{ parts:['at','lan','ti','co'], count:4 },
+          s_w_calido:{ parts:['ca','li','do'], count:3 },
+          s_w_nadare:{ parts:['na','da','re'], count:3 },
+          s_w_oceano:{ parts:['o','ce','a','no'], count:4 },
+          s_w_nosotros:{ parts:['no','so','tros'], count:3 },
+        },
+        accent: { a_w_atlantico:'esdrujula', a_w_calido:'esdrujula', a_w_nadare:'aguda', a_w_oceano:'esdrujula', a_w_nosotros:'llana' },
+        sentence: 'NOSOTROS NADAMOS EN EL OCÉANO ATLÁNTICO',
+        ex3Tokens: ['NOSOTROS','NADAMOS','EN','EL','OCÉANO','ATLÁNTICO'],
+        ex3Words: { ex3_1:'sujeto', ex3_2:'verbo', ex3_3:'predicado', ex3_4:'predicado', ex3_5:'predicado', ex3_6:'predicado' }
+      }
+    }
+  };
+
+  // ===== Estado =====
+  let currentPage = 1;
+  let WORDS = [];
+  let KEY = {};
+  let EX3W = [];
+
+  let activeCat = null; // Ej1 sin preselección
+  let ex3Active = 'sujeto';
+
+  const state = {
+    cats: {},
+    ex3: {},
+    ex3VerbMarks: {}
+  };
+
+  // ===== Ej1: Render / UI =====
+  function setActiveCat(cat){
+    activeCat = cat;
+    document.querySelectorAll('#palette .palBtn').forEach((b)=>{
+      b.classList.toggle('active', !!cat && b.dataset.cat === cat);
+    });
+  }
+
+  function renderWords(){
+    const box = $('wordsBox');
+    box.innerHTML = '';
+    for(const w of WORDS){
+      const el = document.createElement('div');
+      el.className = 'w';
+      el.id = w.id;
+      el.textContent = w.text;
+      const sm = document.createElement('small');
+      sm.textContent = '';
+      el.appendChild(sm);
+      el.addEventListener('click', ()=>{
+        if(!activeCat){
+          msg('Primero elige una categoría para clasificar.');
+          return;
+        }
+        state.cats[w.id] = activeCat;
+        updateWordsUI();
+        msg('');
+      });
+      box.appendChild(el);
+    }
+    updateWordsUI();
+  }
+
+  function updateWordsUI(){
+    for(const w of WORDS){
+      const el = $(w.id);
+      if(!el) continue;
+      const cat = state.cats[w.id];
+      const sm = el.querySelector('small');
+
+      el.classList.remove('markGood','markBad');
+
+      if(!cat){
+        el.style.background = '#fff';
+        el.style.color = 'inherit';
+        el.style.borderColor = 'var(--line)';
+        if(sm) sm.textContent = '';
+        continue;
+      }
+
+      const textDark = (cat === 'sust_comun' || cat === 'pronombre');
+      el.style.background = CAT_COLOR[cat];
+      el.style.color = textDark ? '#111827' : '#ffffff';
+      el.style.borderColor = 'rgba(0,0,0,.12)';
+      if(sm){
+        sm.textContent = CAT_LABEL[cat];
+        sm.style.color = textDark ? 'rgba(0,0,0,.65)' : 'rgba(255,255,255,.85)';
+      }
+    }
+  }
+
+  // ===== Ej2: Render =====
+  // IMPORTANTE: usa las mismas WORDS del ejercicio 1.
+  function renderExercise2(){
+    $('practiceWords').innerHTML = '';
+    $('syllablesBox').innerHTML = '';
+    $('accentBox').innerHTML = '';
+
+    for(const w of WORDS){
+      // Columna PALABRAS
+      const p = document.createElement('div');
+      p.className = 'sentence';
+      p.textContent = w.text;
+      $('practiceWords').appendChild(p);
+
+      // Columna SÍLABAS
+      const wrap = document.createElement('div');
+      wrap.className = 'box';
+      wrap.style.borderStyle = 'dashed';
+
+      const mini = document.createElement('div');
+      mini.className = 'mini';
+      mini.innerHTML = '<b>' + w.text + '</b> · Nº de sílabas';
+
+      const top = document.createElement('div');
+      top.className = 'inline2';
+
+      const sel = document.createElement('select');
+      sel.id = 'k_' + w.id;
+      sel.innerHTML = '<option value="">Selecciona...</option>' +
+        '<option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>';
+
+      const hint = document.createElement('div');
+      hint.className = 'mini';
+      hint.style.margin = '0';
+      hint.style.alignSelf = 'center';
+      hint.textContent = 'Escribe las sílabas';
+
+      const holder = document.createElement('div');
+      holder.id = 'syll_' + w.id;
+      holder.className = 'inline3';
+      holder.style.marginTop = '10px';
+
+      sel.addEventListener('change', ()=>renderSyllableInputs(w.id));
+
+      top.appendChild(sel);
+      top.appendChild(hint);
+      wrap.appendChild(mini);
+      wrap.appendChild(top);
+      wrap.appendChild(holder);
+      $('syllablesBox').appendChild(wrap);
+
+      // Columna ACENTUACIÓN
+      const acc = document.createElement('select');
+      acc.id = 'a_' + w.id;
+      acc.innerHTML = '<option value="">' + w.text + ' · Selecciona...</option>' +
+        '<option>Aguda</option><option>Llana</option><option>Esdrújula</option>';
+      $('accentBox').appendChild(acc);
+    }
+  }
+
+  function renderSyllableInputs(wordId){
+    const sel = $('k_' + wordId);
+    const holder = $('syll_' + wordId);
+    holder.innerHTML = '';
+
+    const n = parseInt((sel && sel.value) ? sel.value : '0', 10);
+    if(!n || n < 1) return;
+
+    holder.classList.remove('inline2','inline3');
+    if(n <= 2) holder.classList.add('inline2');
+    else holder.classList.add('inline3');
+
+    for(let i=1;i<=n;i++){
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.id = 's_' + wordId + '_' + i;
+      inp.placeholder = 'Sílaba ' + i;
+      holder.appendChild(inp);
+    }
+  }
+
+  // ===== Ej3: Render / UI =====
+  function setEx3Active(cat){
+    ex3Active = cat;
+    document.querySelectorAll('#ex3Palette .palBtn').forEach((b)=>{
+      b.classList.toggle('active', b.dataset.ex3 === cat);
+    });
+  }
+
+  function paintEx3(wordId, cat){
+    // Verbo = borde (persistente)
+    if(cat === 'verbo') state.ex3VerbMarks[wordId] = true;
+    else state.ex3[wordId] = cat;
+    updateEx3UI();
+  }
+
+  function renderEx3(){
+    $('sentenceText').textContent = KEY.sentence || '';
+    const box = $('ex3Box');
+    box.innerHTML = '';
+    for(const w of EX3W){
+      const el = document.createElement('div');
+      el.className = 'w';
+      el.id = w.id;
+      el.textContent = w.text;
+      const sm = document.createElement('small');
+      sm.textContent = '';
+      el.appendChild(sm);
+      el.addEventListener('click', ()=>paintEx3(w.id, ex3Active));
+      box.appendChild(el);
+    }
+    updateEx3UI();
+  }
+
+  function updateEx3UI(){
+    for(const w of EX3W){
+      const el = $(w.id);
+      if(!el) continue;
+      const role = state.ex3[w.id];
+      const isVerbMarked = !!state.ex3VerbMarks[w.id];
+      const sm = el.querySelector('small');
+
+      el.style.background = '#fff';
+      el.style.color = 'inherit';
+      el.style.borderColor = 'var(--line)';
+      el.style.borderWidth = '2px';
+      if(sm) sm.textContent = '';
+
+      if(role === 'sujeto'){
+        el.style.background = EX3_COLOR.sujeto;
+        el.style.color = '#111827';
+        if(sm) sm.textContent = 'SUJETO';
+      }
+      if(role === 'predicado'){
+        el.style.background = EX3_COLOR.predicado;
+        el.style.color = '#111827';
+        if(sm) sm.textContent = 'PREDICADO';
+      }
+      if(isVerbMarked){
+        el.style.borderColor = EX3_COLOR.verbo;
+        el.style.borderWidth = '4px';
+        if(sm) sm.textContent = (sm.textContent ? sm.textContent + ' · VERBO' : 'VERBO');
+      }
+
+      el.classList.remove('markGood','markBad');
+    }
+  }
+
+  // ===== Corrección =====
+  function checkEx1(){
+    for(const w of WORDS){
+      const el = $(w.id);
+      const got = state.cats[w.id] || '';
+      const right = (KEY.ex1Cats || {})[w.id] || '';
+      if(!got){ setMark(el, null); continue; }
+      setMark(el, got === right);
+    }
+  }
+
+  function checkSyl(wordId){
+    const sel = $('k_' + wordId);
+    const chosen = (sel && sel.value) ? sel.value : '';
+    const n = parseInt(chosen ? chosen : '0', 10);
+    const key = (KEY.syl || {})['s_' + wordId];
+
+    if(!chosen){ setMark(sel, null); return; }
+
+    const countOk = key ? (n === key.count) : true;
+    setMark(sel, key ? countOk : null);
+
+    if(!n || n < 1) return;
+
+    const expectedParts = key ? (key.parts || []).map(p=>strip(p)) : [];
+
+    for(let i=1;i<=n;i++){
+      const inp = $('s_' + wordId + '_' + i);
+      if(!inp) continue;
+      const got = strip(inp.value);
+      if(!got){ setMark(inp, null); continue; }
+      const exp = expectedParts[i-1] || '';
+      setMark(inp, !!exp ? (got === exp) : null);
+    }
+  }
+
+  function checkAccent(wordId){
+    const el = $('a_' + wordId);
+    const got = (el && el.value) ? el.value : '';
+    const right = (KEY.accent || {})['a_' + wordId];
+    if(!got){ setMark(el, null); return; }
+    setMark(el, right ? (strip(got) === right) : null);
+  }
+
+  function checkEx3(){
+    for(const w of EX3W){
+      const el = $(w.id);
+      const got = state.ex3[w.id] || '';
+      const right = (KEY.ex3Words || {})[w.id] || '';
+
+      const attempted = !!got || !!state.ex3VerbMarks[w.id];
+      if(!attempted){ setMark(el, null); continue; }
+      if(!right){ setMark(el, null); continue; }
+      setMark(el, got === right);
+    }
+  }
+
+  function compute(){
+    msg('');
+
+    checkEx1();
+    for(const w of WORDS){
+      checkSyl(w.id);
+      checkAccent(w.id);
+    }
+    checkEx3();
+
+    // Puntuación: solo lo intentado (marcado verde/rojo)
+    const allMarked = document.querySelectorAll('.markGood, .markBad');
+    const goodMarked = document.querySelectorAll('.markGood');
+    const total = allMarked.length;
+    const good = goodMarked.length;
+
+    if(total === 0){
+      $('scoreBox').textContent = 'Puntuación: —';
+      msg('Aún no has respondido ningún apartado.');
+      return { good:0, total:0 };
+    }
+
+    $('scoreBox').textContent = 'Puntuación: ' + good + ' / ' + total;
+    msg(good === total ? '¡Perfecto!' : 'Revisa lo marcado en rojo y vuelve a comprobar.');
+    return { good, total };
+  }
+
+  // ===== Resultados para PDF =====
+  function getResultsSnapshot(){
+    // No fuerza corrección visual; solo lee lo que hay (y lo compara con la clave)
+    const res = {
+      ficha: currentPage,
+      titulo: (PAGES[currentPage]||{}).title || ('GRAMÁTICA ' + currentPage),
+      nombre: ($('fNombre')?.value || '').trim(),
+      fecha: ($('fFecha')?.value || '').trim(),
+      lista: ($('fLista')?.value || '').trim(),
+      ex1: [],
+      ex2: [],
+      ex3: [],
+      score: { good:0, total:0 }
+    };
+
+    // EX1
+    for(const w of WORDS){
+      const got = state.cats[w.id] || '';
+      const right = (KEY.ex1Cats||{})[w.id] || '';
+      const attempted = !!got;
+      const ok = attempted ? (got === right) : null;
+      res.ex1.push({ word:w.text, got, right, attempted, ok });
+      if(attempted){ res.score.total++; if(ok) res.score.good++; }
+    }
+
+    // EX2: sílabas + acento
+    for(const w of WORDS){
+      const sylKey = (KEY.syl||{})['s_' + w.id];
+      const accKey = (KEY.accent||{})['a_' + w.id];
+
+      const chosenCount = ($('k_' + w.id)?.value || '').trim();
+      const attemptedCount = !!chosenCount;
+      const n = parseInt(chosenCount ? chosenCount : '0', 10);
+      const countOk = attemptedCount && sylKey ? (n === sylKey.count) : (attemptedCount ? null : null);
+
+      // Sílabas escritas
+      const parts = [];
+      let anySyllAttempted = false;
+      for(let i=1;i<=Math.max(n, (sylKey?.count||0));i++){
+        const inp = $('s_' + w.id + '_' + i);
+        if(!inp) continue;
+        const gotPartRaw = (inp.value || '').trim();
+        const attempted = !!gotPartRaw;
+        if(attempted) anySyllAttempted = true;
+        const exp = (sylKey?.parts?.[i-1]) || '';
+        const ok = attempted && exp ? (strip(gotPartRaw) === strip(exp)) : (attempted ? null : null);
+        parts.push({ i, got: gotPartRaw, right: exp, attempted, ok });
+      }
+
+      // Acento
+      const gotAcc = ($('a_' + w.id)?.value || '').trim();
+      const attemptedAcc = !!gotAcc;
+      const rightAcc = accKey || '';
+      const okAcc = attemptedAcc && rightAcc ? (strip(gotAcc) === rightAcc) : (attemptedAcc ? null : null);
+
+      // Puntuación (solo intentos)
+      if(attemptedCount && sylKey){ res.score.total++; if(n === sylKey.count) res.score.good++; }
+      for(const p of parts){ if(p.attempted && p.right){ res.score.total++; if(p.ok) res.score.good++; } }
+      if(attemptedAcc && rightAcc){ res.score.total++; if(okAcc) res.score.good++; }
+
+      res.ex2.push({ word:w.text, chosenCount, rightCount: sylKey?.count ?? '', countAttempted: attemptedCount, countOk: (attemptedCount && sylKey) ? (n === sylKey.count) : null, parts, gotAcc, rightAcc, accAttempted: attemptedAcc, accOk: (attemptedAcc && rightAcc) ? okAcc : null });
+    }
+
+    // EX3: sujeto/predicado + borde verbo
+    for(const w of EX3W){
+      const gotRole = state.ex3[w.id] || '';
+      const verbBorder = !!state.ex3VerbMarks[w.id];
+      const right = (KEY.ex3Words||{})[w.id] || '';
+      const attempted = !!gotRole || verbBorder;
+      const ok = (!!gotRole && right) ? (gotRole === right) : (attempted ? null : null);
+
+      // puntuación: cuenta solo si intentó rol (suj/pred) o si el right era verbo y marcó borde
+      if(right === 'verbo'){
+        if(verbBorder){ res.score.total++; res.score.good++; }
+        else if(attempted){ res.score.total++; }
+      }else if(!!gotRole && !!right){
+        res.score.total++; if(ok) res.score.good++;
+      }
+
+      res.ex3.push({ token:w.text, gotRole, verbBorder, right, attempted, ok });
+    }
+
+    return res;
+  }
+
+  function buildReportHTML(r){
+    const catNice = (c)=>({
+      sust_comun:'Sustantivo común',
+      sust_propio:'Sustantivo propio',
+      adjetivo:'Adjetivo',
+      verbo:'Verbo',
+      pronombre:'Pronombre'
+    }[c] || (c||''));
+
+    const roleNice = (c)=>({ sujeto:'Sujeto', predicado:'Predicado', verbo:'Verbo' }[c] || (c||''));
+
+    const badge = (ok)=> ok===true
+      ? '<span class="b ok">✔</span>'
+      : (ok===false ? '<span class="b bad">✘</span>' : '<span class="b">—</span>');
+
+    const head = `
+      <style>
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:24px;color:#111827}
+        h1{margin:0 0 8px;font-size:26px}
+        h2{margin:18px 0 8px;font-size:18px}
+        .meta{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 14px}
+        .chip{border:2px solid #d6d9df;border-radius:12px;padding:8px 10px;font-weight:900;background:#fff}
+        table{width:100%;border-collapse:collapse;margin:8px 0 14px}
+        th,td{border:1px solid #e5e7eb;padding:8px 10px;text-align:left;font-size:13px;vertical-align:top}
+        th{background:#f9fafb}
+        .b{display:inline-block;min-width:20px;text-align:center;border:1px solid #e5e7eb;border-radius:999px;padding:2px 8px;font-weight:900}
+        .ok{border-color:#16a34a;color:#16a34a}
+        .bad{border-color:#dc2626;color:#dc2626}
+        .muted{color:#6b7280}
+        .score{font-size:16px;font-weight:1000;margin-top:6px}
+        .footer{margin-top:18px;font-size:12px;color:#6b7280}
+        @media print{ .noPrint{display:none} }
+      </style>
+    `;
+
+    const meta = `
+      <div class="meta">
+        <div class="chip">Ficha: ${escapeHtml(r.titulo)}</div>
+        <div class="chip">Nombre: ${escapeHtml(r.nombre || '—')}</div>
+        <div class="chip">Fecha: ${escapeHtml(r.fecha || '—')}</div>
+        <div class="chip">Nº lista: ${escapeHtml(r.lista || '—')}</div>
+      </div>
+      <div class="score">Puntuación: ${r.score.total ? `${r.score.good} / ${r.score.total}` : '—'}</div>
+    `;
+
+    const ex1Rows = r.ex1.map(x=>`<tr>
+      <td><b>${escapeHtml(x.word)}</b></td>
+      <td>${escapeHtml(catNice(x.got) || '—')}</td>
+      <td class="muted">${escapeHtml(catNice(x.right) || '—')}</td>
+      <td>${badge(x.ok)}</td>
+    </tr>`).join('');
+
+    const ex2Rows = r.ex2.map(x=>{
+      const parts = (x.parts||[])
+        .filter(p=>p.attempted || p.right)
+        .map(p=>`<div>${p.i}. <b>${escapeHtml(p.got||'—')}</b> <span class="muted">(✔ ${escapeHtml(p.right||'')})</span> ${badge(p.ok)}</div>`)
+        .join('') || '<span class="muted">—</span>';
+
+      const countBadge = (x.countAttempted && x.rightCount) ? badge(x.countOk) : '<span class="b">—</span>';
+      const accBadge = (x.accAttempted && x.rightAcc) ? badge(x.accOk) : '<span class="b">—</span>';
+
+      return `<tr>
+        <td><b>${escapeHtml(x.word)}</b></td>
+        <td>${escapeHtml(x.chosenCount || '—')} <span class="muted">(✔ ${escapeHtml(String(x.rightCount||''))})</span> ${countBadge}</td>
+        <td>${parts}</td>
+        <td>${escapeHtml(x.gotAcc || '—')} <span class="muted">(✔ ${escapeHtml({aguda:'Aguda',llana:'Llana',esdrujula:'Esdrújula'}[x.rightAcc]||'')})</span> ${accBadge}</td>
+      </tr>`;
+    }).join('');
+
+    const ex3Rows = r.ex3.map(x=>{
+      const got = x.gotRole ? roleNice(x.gotRole) : (x.verbBorder ? 'Verbo (borde)' : '—');
+      const right = roleNice(x.right||'');
+      const ok = (x.right==='verbo') ? (x.verbBorder ? true : (x.attempted ? false : null)) : x.ok;
+      return `<tr>
+        <td><b>${escapeHtml(x.token)}</b></td>
+        <td>${escapeHtml(got)}</td>
+        <td class="muted">${escapeHtml(right||'')}</td>
+        <td>${badge(ok)}</td>
+      </tr>`;
+    }).join('');
+
+    const html = `<!doctype html><html lang="es"><head><meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>${escapeHtml(r.titulo)} · Resultados</title>${head}
+      </head><body>
+      <div class="noPrint muted">Consejo: en el diálogo de impresión elige “Guardar como PDF”.</div>
+      <h1>Resultados · ${escapeHtml(r.titulo)}</h1>
+      ${meta}
+
+      <h2>Ejercicio 1 · Clasificación</h2>
+      <table>
+        <thead><tr><th>Palabra</th><th>Respuesta alumno</th><th>Correcta</th><th>OK</th></tr></thead>
+        <tbody>${ex1Rows}</tbody>
+      </table>
+
+      <h2>Ejercicio 2 · Sílabas y acentuación</h2>
+      <table>
+        <thead><tr><th>Palabra</th><th>Nº sílabas</th><th>Sílabas</th><th>Acentuación</th></tr></thead>
+        <tbody>${ex2Rows}</tbody>
+      </table>
+
+      <h2>Ejercicio 3 · Oración</h2>
+      <div class="muted" style="margin:6px 0 10px"><b>Oración:</b> ${escapeHtml(KEY.sentence || '')}</div>
+      <table>
+        <thead><tr><th>Token</th><th>Respuesta alumno</th><th>Correcta</th><th>OK</th></tr></thead>
+        <tbody>${ex3Rows}</tbody>
+      </table>
+
+      <div class="footer">Gota Educativa · Reporte generado desde la ficha digital</div>
+
+      <script>
+        window.onload = () => { setTimeout(() => { try{ window.focus(); window.print(); }catch(e){} }, 350); };
+      <\/script>
+      </body></html>`;
+
+    return html;
+  }
+
+  function downloadPDF(){
+    // Forzamos corrección primero, para que la puntuación esté al día
+    const _ = compute();
+    const r = getResultsSnapshot();
+
+    const html = buildReportHTML(r);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const w = window.open(url, '_blank');
+    if(!w){
+      msg('Tu navegador ha bloqueado la ventana emergente. Permite pop-ups para “Descargar PDF”.');
+      return;
+    }
+
+    // Limpieza del blob
+    const cleanup = () => { try{ URL.revokeObjectURL(url); }catch(e){} };
+    // Algunos navegadores no disparan afterprint en ventanas nuevas
+    setTimeout(cleanup, 15000);
+    try{ w.addEventListener('afterprint', cleanup); }catch(e){}
+  }
+
+  function showSolutions(){
+    // Ej1
+    state.cats = {};
+    Object.keys(KEY.ex1Cats || {}).forEach((wid)=>{ state.cats[wid] = KEY.ex1Cats[wid]; });
+    updateWordsUI();
+
+    // Ej2
+    Object.keys(KEY.syl || {}).forEach((k)=>{
+      const wordId = k.replace('s_','');
+      const info = KEY.syl[k];
+      const sel = $('k_' + wordId);
+      if(sel) sel.value = String(info.count);
+      renderSyllableInputs(wordId);
+      (info.parts || []).forEach((p, idx)=>{
+        const inp = $('s_' + wordId + '_' + (idx+1));
+        if(inp) inp.value = p;
+      });
+    });
+
+    Object.keys(KEY.accent || {}).forEach((k)=>{
+      const wordId = k.replace('a_','');
+      const el = $('a_' + wordId);
+      const v = KEY.accent[k];
+      if(!el) return;
+      if(v === 'aguda') el.value = 'Aguda';
+      if(v === 'llana') el.value = 'Llana';
+      if(v === 'esdrujula') el.value = 'Esdrújula';
+    });
+
+    // Ej3
+    state.ex3 = {};
+    state.ex3VerbMarks = {};
+    Object.keys(KEY.ex3Words || {}).forEach((id)=>{
+      const role = KEY.ex3Words[id];
+      if(role === 'verbo') state.ex3VerbMarks[id] = true;
+      else state.ex3[id] = role;
+    });
+    updateEx3UI();
+
+    compute();
+    msg('Soluciones mostradas.');
+  }
+
+  function resetAll(){
+    state.cats = {};
+    state.ex3 = {};
+    state.ex3VerbMarks = {};
+
+    // Limpia selects e inputs de Ej2
+    document.querySelectorAll('#sec2 select').forEach((s)=>{ s.value = ''; s.classList.remove('markGood','markBad'); });
+    document.querySelectorAll('#sec2 input').forEach((i)=>{ i.value=''; i.classList.remove('markGood','markBad'); });
+
+    // Limpia marcas
+    document.querySelectorAll('.w').forEach((w)=>w.classList.remove('markGood','markBad'));
+
+    setActiveCat(null);
+    setEx3Active('sujeto');
+
+    updateWordsUI();
+    updateEx3UI();
+    $('scoreBox').textContent = 'Puntuación: —';
+    msg('');
+  }
+
+  // ===== Selector de ficha =====
+  function setPage(n){
+    const cfg = PAGES[n];
+    currentPage = n;
+    WORDS = cfg.words;
+    KEY = cfg.key;
+
+    $('pageTitle').textContent = cfg.title;
+    document.title = cfg.title + ' · Gota Educativa';
+
+    EX3W = (KEY.ex3Tokens || []).map((t, i)=>({ id:'ex3_' + (i+1), text:String(t).trim() }));
+
+    resetAll();
+    renderWords();
+    renderExercise2();
+    renderEx3();
+  }
+
+  // ===== Eventos =====
+  $('btnCheck').addEventListener('click', compute);
+  $('btnReset').addEventListener('click', ()=>{ setPage(currentPage); window.scrollTo({top:0, behavior:'smooth'}); });
+  $('btnShow').addEventListener('click', showSolutions);
+  $('btnPdf').addEventListener('click', downloadPDF);
+
+  $('pageSelector').addEventListener('change', function(){
+    const v = parseInt(this.value, 10) || 1;
+    setPage(v);
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  document.querySelectorAll('#palette .palBtn').forEach((b)=>b.addEventListener('click', ()=>{ setActiveCat(b.dataset.cat); msg(''); }));
+  document.querySelectorAll('#ex3Palette .palBtn').forEach((b)=>b.addEventListener('click', ()=>setEx3Active(b.dataset.ex3)));
+
+  // ===== Arranque =====
+  setActiveCat(null);
+  setPage(1);
+</script>
+</body>
+</html>
