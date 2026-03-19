@@ -91,7 +91,36 @@
     .markGood{outline:3px solid rgba(22,163,74,.25);border-color:rgba(22,163,74,.45)!important}
     .markBad{outline:3px solid rgba(220,38,38,.18);border-color:rgba(220,38,38,.55)!important}
 
-    .footer{padding:12px 16px;border-top:2px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+    .footer{padding:18px 16px;border-top:2px solid var(--line);display:flex;flex-direction:column;gap:12px;align-items:center;color:var(--muted);font-size:12px}
+
+.footerLinks{display:flex;gap:14px;flex-wrap:wrap}
+
+.footerBtn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  border-radius:10px;
+  border:none;
+  font-weight:900;
+  cursor:pointer;
+  transition:all .2s ease;
+  color:#fff;
+}
+
+#btnInsta{
+  background:linear-gradient(45deg,#fd1d1d,#fcb045,#833ab4);
+}
+
+#btnYouTube{
+  background:#ff0000;
+}
+
+.footerBtn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 14px rgba(0,0,0,.2);
+}
+.footerBtn span{font-size:14px}
 
     @media (max-width: 860px){
       .title{font-size:34px}
@@ -102,6 +131,16 @@
 </head>
 
 <body>
+
+<div id="loginScreen" style="position:fixed;inset:0;background:#f4f6fb;display:flex;align-items:center;justify-content:center;z-index:9999">
+  <div style="background:#fff;padding:30px;border-radius:16px;border:2px solid #d6d9df;box-shadow:0 10px 30px rgba(0,0,0,.15);text-align:center;max-width:320px;width:90%">
+    <h2 style="margin-bottom:10px">Acceso a la ficha</h2>
+    <p style="font-size:14px;color:#6b7280">Introduce la contraseña</p>
+    <input id="passInput" type="password" placeholder="Contraseña" style="width:100%;margin-top:10px;padding:10px;border-radius:10px;border:2px solid #d6d9df;font-weight:900" />
+    <button id="passBtn" style="margin-top:12px;width:100%;padding:10px;border:none;border-radius:10px;background:#111827;color:#fff;font-weight:900">Entrar</button>
+    <div id="passMsg" style="margin-top:8px;color:#dc2626;font-size:13px"></div>
+  </div>
+</div>
   <div class="page" role="application" aria-label="Ficha digital de gramática">
 
     <div class="topbar">
@@ -133,6 +172,7 @@
           <button class="btnGhost" id="btnReset">Reiniciar</button>
           <button class="btnWarn" id="btnShow">Ver soluciones</button>
           <button class="btnGhost" id="btnPdf">Descargar PDF</button>
+          
         </div>
         <div class="score" id="scoreBox">Puntuación: —</div>
       </div>
@@ -185,6 +225,10 @@
     </div>
 
     <div class="footer">
+      <div class="footerLinks">
+        <button class="footerBtn" id="btnInsta"><span>📸</span> Instagram @gotaeducativa</button>
+        <button class="footerBtn" id="btnYouTube"><span>▶</span> YouTube @gotaeducativa</button>
+      </div>
       <div>GOTA EDUCATIVA · Ficha digital</div>
       <div id="msg" aria-live="polite"></div>
     </div>
@@ -538,11 +582,23 @@
   }
 
   function paintEx3(wordId, cat){
-    // Verbo = borde (persistente)
-    if(cat === 'verbo') state.ex3VerbMarks[wordId] = true;
-    else state.ex3[wordId] = cat;
-    updateEx3UI();
+  // Toggle VERBO (borde)
+  if(cat === 'verbo'){
+    if(state.ex3VerbMarks[wordId]){
+      delete state.ex3VerbMarks[wordId];
+    }else{
+      state.ex3VerbMarks[wordId] = true;
+    }
+  }else{
+    // Toggle sujeto/predicado
+    if(state.ex3[wordId] === cat){
+      delete state.ex3[wordId];
+    }else{
+      state.ex3[wordId] = cat;
+    }
   }
+  updateEx3UI();
+}
 
   function renderEx3(){
     $('sentenceText').textContent = KEY.sentence || '';
@@ -645,11 +701,28 @@
       const el = $(w.id);
       const got = state.ex3[w.id] || '';
       const right = (KEY.ex3Words || {})[w.id] || '';
+      const hasVerb = !!state.ex3VerbMarks[w.id];
 
-      const attempted = !!got || !!state.ex3VerbMarks[w.id];
-      if(!attempted){ setMark(el, null); continue; }
-      if(!right){ setMark(el, null); continue; }
-      setMark(el, got === right);
+      const attempted = !!got || hasVerb;
+      if(!attempted){
+        setMark(el, null);
+        continue;
+      }
+      if(!right){
+        setMark(el, null);
+        continue;
+      }
+
+      let ok = false;
+
+      if(right === 'verbo'){
+        // El verbo debe identificarse como VERBO y además formar parte del PREDICADO.
+        ok = hasVerb && got === 'predicado';
+      }else{
+        ok = (got === right) && !hasVerb;
+      }
+
+      setMark(el, ok);
     }
   }
 
@@ -663,20 +736,61 @@
     }
     checkEx3();
 
-    // Puntuación: solo lo intentado (marcado verde/rojo)
-    const allMarked = document.querySelectorAll('.markGood, .markBad');
-    const goodMarked = document.querySelectorAll('.markGood');
-    const total = allMarked.length;
-    const good = goodMarked.length;
+    // Puntuación sobre el TOTAL de ítems de la ficha
+    let total = 0;
+    let good = 0;
 
-    if(total === 0){
-      $('scoreBox').textContent = 'Puntuación: —';
-      msg('Aún no has respondido ningún apartado.');
-      return { good:0, total:0 };
+    // EX1
+    for(const w of WORDS){
+      total++;
+      const got = state.cats[w.id] || '';
+      const right = (KEY.ex1Cats || {})[w.id] || '';
+      if(got && got === right) good++;
+    }
+
+    // EX2
+    for(const w of WORDS){
+      const sylKey = (KEY.syl || {})['s_' + w.id];
+      const accKey = (KEY.accent || {})['a_' + w.id];
+
+      // nº de sílabas
+      total++;
+      const chosen = ($('k_' + w.id)?.value || '').trim();
+      if(chosen && sylKey && parseInt(chosen, 10) === sylKey.count) good++;
+
+      // sílabas escritas
+      if(sylKey){
+        for(let i = 0; i < sylKey.parts.length; i++){
+          total++;
+          const inp = $('s_' + w.id + '_' + (i + 1));
+          const val = inp ? strip(inp.value) : '';
+          if(val && val === strip(sylKey.parts[i])) good++;
+        }
+      }
+
+      // acentuación
+      total++;
+      const acc = ($('a_' + w.id)?.value || '').trim();
+      if(acc && accKey && strip(acc) === accKey) good++;
+    }
+
+    // EX3
+    for(const w of EX3W){
+      const right = (KEY.ex3Words || {})[w.id] || '';
+      const got = state.ex3[w.id] || '';
+      const hasVerb = !!state.ex3VerbMarks[w.id];
+      total++;
+
+      if(right === 'verbo'){
+        // Correcto solo si está como verbo y además dentro del predicado.
+        if(hasVerb && got === 'predicado') good++;
+      }else{
+        if(got && got === right && !hasVerb) good++;
+      }
     }
 
     $('scoreBox').textContent = 'Puntuación: ' + good + ' / ' + total;
-    msg(good === total ? '¡Perfecto!' : 'Revisa lo marcado en rojo y vuelve a comprobar.');
+    msg(good === total ? '¡Perfecto!' : 'Sigue intentando, aún puedes mejorar.');
     return { good, total };
   }
 
@@ -749,14 +863,20 @@
       const verbBorder = !!state.ex3VerbMarks[w.id];
       const right = (KEY.ex3Words||{})[w.id] || '';
       const attempted = !!gotRole || verbBorder;
-      const ok = (!!gotRole && right) ? (gotRole === right) : (attempted ? null : null);
 
-      // puntuación: cuenta solo si intentó rol (suj/pred) o si el right era verbo y marcó borde
-      if(right === 'verbo'){
-        if(verbBorder){ res.score.total++; res.score.good++; }
-        else if(attempted){ res.score.total++; }
-      }else if(!!gotRole && !!right){
-        res.score.total++; if(ok) res.score.good++;
+      let ok = null;
+      if(attempted && right){
+        if(right === 'verbo'){
+          ok = verbBorder && gotRole === 'predicado';
+        }else{
+          ok = (gotRole === right) && !verbBorder;
+        }
+      }
+
+      // puntuación del reporte: sobre total de ítems realmente existentes en la ficha
+      if(right){
+        res.score.total++;
+        if(ok === true) res.score.good++;
       }
 
       res.ex3.push({ token:w.text, gotRole, verbBorder, right, attempted, ok });
@@ -835,14 +955,21 @@
     }).join('');
 
     const ex3Rows = r.ex3.map(x=>{
-      const got = x.gotRole ? roleNice(x.gotRole) : (x.verbBorder ? 'Verbo (borde)' : '—');
+      let got = '—';
+      if(x.gotRole && x.verbBorder){
+        got = roleNice(x.gotRole) + ' + Verbo';
+      }else if(x.gotRole){
+        got = roleNice(x.gotRole);
+      }else if(x.verbBorder){
+        got = 'Verbo';
+      }
+
       const right = roleNice(x.right||'');
-      const ok = (x.right==='verbo') ? (x.verbBorder ? true : (x.attempted ? false : null)) : x.ok;
       return `<tr>
         <td><b>${escapeHtml(x.token)}</b></td>
         <td>${escapeHtml(got)}</td>
         <td class="muted">${escapeHtml(right||'')}</td>
-        <td>${badge(ok)}</td>
+        <td>${badge(x.ok)}</td>
       </tr>`;
     }).join('');
 
@@ -939,8 +1066,12 @@
     state.ex3VerbMarks = {};
     Object.keys(KEY.ex3Words || {}).forEach((id)=>{
       const role = KEY.ex3Words[id];
-      if(role === 'verbo') state.ex3VerbMarks[id] = true;
-      else state.ex3[id] = role;
+      if(role === 'verbo'){
+        state.ex3VerbMarks[id] = true;
+        state.ex3[id] = 'predicado';
+      }else{
+        state.ex3[id] = role;
+      }
     });
     updateEx3UI();
 
@@ -993,6 +1124,14 @@
   $('btnShow').addEventListener('click', showSolutions);
   $('btnPdf').addEventListener('click', downloadPDF);
 
+  // Botones redes
+  $('btnInsta').addEventListener('click', ()=>{
+    window.open('https://www.instagram.com/gotaeducativa', '_blank');
+  });
+  $('btnYouTube').addEventListener('click', ()=>{
+    window.open('https://www.youtube.com/@gotaeducativa', '_blank');
+  });
+
   $('pageSelector').addEventListener('change', function(){
     const v = parseInt(this.value, 10) || 1;
     setPage(v);
@@ -1002,7 +1141,22 @@
   document.querySelectorAll('#palette .palBtn').forEach((b)=>b.addEventListener('click', ()=>{ setActiveCat(b.dataset.cat); msg(''); }));
   document.querySelectorAll('#ex3Palette .palBtn').forEach((b)=>b.addEventListener('click', ()=>setEx3Active(b.dataset.ex3)));
 
-  // ===== Arranque =====
+  // ===== Acceso con contraseña =====
+const PASSWORD = 'GOTAEDUCATIVA1';
+
+$('passBtn').addEventListener('click', checkPassword);
+$('passInput').addEventListener('keypress', (e)=>{ if(e.key==='Enter') checkPassword(); });
+
+function checkPassword(){
+  const val = ($('passInput').value || '').trim();
+  if(val === PASSWORD){
+    $('loginScreen').style.display = 'none';
+  }else{
+    $('passMsg').textContent = 'Contraseña incorrecta';
+  }
+}
+
+// ===== Arranque =====
   setActiveCat(null);
   setPage(1);
 </script>
